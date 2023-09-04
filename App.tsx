@@ -7,7 +7,6 @@ import {
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import HomeScreen from './src/HomeScreen';
 
-
 function App(): JSX.Element {
   return (
     <GestureHandlerRootView style={{
@@ -20,6 +19,7 @@ function App(): JSX.Element {
       }}>
         <StatusBar hidden />
         <HomeScreen />
+        {/* <VerticalCarousel /> */}
       </SafeAreaView>
     </GestureHandlerRootView>
   );
