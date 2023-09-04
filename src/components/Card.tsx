@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { CardItemType } from "../types/CardItemType";
+import { windowHeight } from "../utils/utils";
 
 interface CardProps {
   item: CardItemType;
@@ -8,10 +9,9 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = (item: CardProps) => {
 
-
   return (
     <View style={{
-      height: 220,
+      height: windowHeight / 4,
       padding: 10
     }}>
       <View style={[styles.container, {
