@@ -40,6 +40,7 @@ const HomeScreen: React.FC = () => {
       useNativeDriver: true
     }).start()
 
+
     // Animated.timing(scrollYAnimtaed, {
     //   toValue: scrollYIndex,
     //   duration: 300,
