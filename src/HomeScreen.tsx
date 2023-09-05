@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Animated,
+  Easing,
   FlatList,
   Image,
   StyleProp,
@@ -13,6 +14,7 @@ import {
 import {
   Directions,
   FlingGestureHandler,
+  GestureEvent,
   HandlerStateChangeEvent,
   State
 } from 'react-native-gesture-handler';
@@ -27,16 +29,23 @@ const VISIBLE_ITEMS: number = 3;
 
 const HomeScreen: React.FC = () => {
   const [data, setData] = useState<Array<CardItemType>>(DATA);
-  const [currentIndex, setCurrentIndex] = useState<number>(0)
   const scrollYIndex = React.useRef(new Animated.Value(0)).current
   const scrollYAnimtaed = React.useRef(new Animated.Value(0)).current
-
+  const [enableAnimation, setEnableAnimation] = useState<boolean>(false)
+  const [currentIndex, setCurrentIndex] = useState<number>(0)
 
   useEffect(() => {
-    Animated.spring(scrollYAnimtaed, {
+    // Animated.spring(scrollYAnimtaed, {
+    //   toValue: scrollYIndex,
+    //   useNativeDriver: true
+    // }).start()
+
+    Animated.timing(scrollYAnimtaed, {
       toValue: scrollYIndex,
-      useNativeDriver: true
-    }).start()
+      duration: 300,
+      useNativeDriver: true,
+      easing: Easing.linear
+    }).start();
 
     // setInterval(() => {
     //   const newIndex: number = Math.floor(Math.random() * data.length)
@@ -126,6 +135,45 @@ const HomeScreen: React.FC = () => {
     }
   }
 
+  const onGestureEvent = (event: GestureEvent<any>) => {
+    // console.log(event.nativeEvent)
+    const { translationY } = event.nativeEvent;
+    const divisor = 100.0;
+    let newIndex = currentIndex + (translationY / divisor);
+    if (newIndex < 0) newIndex = 0;
+    if (newIndex > data.length - 1) newIndex = data.length - 1;
+    console.log('newIndex',)
+
+    if (event.nativeEvent.translationY < 0) {
+      console.log("up")
+      if (currentIndex > 0) {
+        setCurrentIndex(Math.floor(currentIndex - newIndex))
+        scrollYIndex.setValue(Math.floor(currentIndex - newIndex))
+      }
+    } else {
+      console.log('down')
+      if (currentIndex < data.length - 1) {
+        if (currentIndex + newIndex < data.length) {
+          setCurrentIndex(Math.floor(currentIndex + newIndex))
+          scrollYIndex.setValue(Math.floor(currentIndex + newIndex))
+        }
+      }
+    }
+  }
+
+  const onHandlerStateChange = (event: GestureEvent<any>) => {
+    if (event.nativeEvent.oldState === State.BEGAN) {
+      console.log('Gesture started! Initial translationY:', event.nativeEvent.translationY);
+      if (!enableAnimation)
+        setEnableAnimation(true)
+    } else if (event.nativeEvent.oldState === State.ACTIVE && event.nativeEvent.state === State.END) {
+      console.log('Gesture ended! Final translationY:', event.nativeEvent.translationY);
+      if (enableAnimation)
+        setEnableAnimation(false)
+    }
+  }
+
+
   return (
     <FlingGestureHandler
       key={'down'}
@@ -135,6 +183,8 @@ const HomeScreen: React.FC = () => {
         key={'down'}
         direction={Directions.UP}
         onHandlerStateChange={swipeUp}>
+        {/* <PanGestureHandler onGestureEvent={onGestureEvent}
+      onHandlerStateChange={onHandlerStateChange}> */}
         <FlatList
           data={data}
           keyExtractor={(_, index) => String(index)}
@@ -158,6 +208,7 @@ const HomeScreen: React.FC = () => {
           }}
           renderItem={renderItem}
         />
+        {/* </PanGestureHandler> */}
       </FlingGestureHandler>
     </FlingGestureHandler>
   );
