@@ -216,7 +216,8 @@ const HomeScreen: React.FC = () => {
         </FlingGestureHandler>
       </FlingGestureHandler>
       <View style={{
-        flexDirection: 'row'
+        flexDirection: 'row',
+        padding: SPACING * 2
       }}>
         <View style={{ flex: 1 }}>
 
