@@ -106,9 +106,10 @@ const HomeScreen: React.FC = () => {
     if (event.nativeEvent.state === State.END) {
       console.log('Down')
       if (currentIndex < data.length) {
-        console.info('wwwwwwwwwwwwwww', currentIndex + 1)
-        setCurrentIndex(currentIndex => currentIndex + 1)
-        scrollYIndex.setValue(currentIndex)
+        const newIndex: number = currentIndex + 1
+        console.info('wwwwwwwwwwwwwww', newIndex)
+        setCurrentIndex(newIndex)
+        scrollYIndex.setValue(newIndex)
       }
     }
   }
@@ -117,9 +118,10 @@ const HomeScreen: React.FC = () => {
     if (event.nativeEvent.state === State.END) {
       console.log('UP')
       if (currentIndex < data.length) {
-        console.info('qqqqqqqqqqqqqqqqq', currentIndex - 1)
-        setCurrentIndex(currentIndex => currentIndex - 1)
-        scrollYIndex.setValue(currentIndex)
+        const newIndex: number = currentIndex - 1
+        console.info('qqqqqqqqqqqqqqqqq', newIndex)
+        setCurrentIndex(newIndex)
+        scrollYIndex.setValue(newIndex)
       }
     }
   }
