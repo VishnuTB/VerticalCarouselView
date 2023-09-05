@@ -10,7 +10,12 @@ import {
   View,
   ViewStyle
 } from "react-native";
-import { GestureEvent, PanGestureHandler } from 'react-native-gesture-handler';
+import {
+  Directions,
+  FlingGestureHandler,
+  HandlerStateChangeEvent,
+  State
+} from 'react-native-gesture-handler';
 import { CardItemType } from "./types/CardItemType";
 import { DATA } from "./utils/data";
 import { windowWidth } from "./utils/utils";
@@ -70,7 +75,8 @@ const HomeScreen: React.FC = () => {
         <TouchableOpacity style={styles.cardContainer}
           activeOpacity={0}
           onPress={() => {
-            scrollYIndex.setValue(index)
+            // scrollYIndex.setValue(index)
+            console.log('item clicked')
           }}>
           <Image style={styles.bgImage}
             source={{ uri: 'https://picsum.photos/500/300' }} />
@@ -96,86 +102,62 @@ const HomeScreen: React.FC = () => {
     );
   };
 
-  const onSwipeEnd = (event: GestureEvent<any>) => {
-    // console.log(event.nativeEvent)
-    // console.log('onSwipeEnd', Math.abs(Math.floor(event.nativeEvent.translationY)))
-    // const { translationY } = event.nativeEvent;
-    // if (event.nativeEvent.state === State.END) {
-    //   if (translationY < 0) {
-    //     console.log("User swiped up!", currentIndex);
-    //     if (currentIndex > 0) {
-    //       setCurrentIndex(currentIndex => currentIndex - 1)
-    //       scrollYIndex.setValue(currentIndex)
-    //     }
-    //   } else if (translationY > 0) {
-    //     console.log("User swiped down!", currentIndex);
-    //     if (currentIndex < data.length) {
-    //       setCurrentIndex(currentIndex => currentIndex + 1)
-    //       scrollYIndex.setValue(currentIndex)
-    //     }
-    //   }
-    // }
+  const swipeDown = (event: HandlerStateChangeEvent<any>) => {
+    if (event.nativeEvent.state === State.END) {
+      console.log('Down')
+      if (currentIndex < data.length) {
+        console.info('wwwwwwwwwwwwwww', currentIndex + 1)
+        setCurrentIndex(currentIndex => currentIndex + 1)
+        scrollYIndex.setValue(currentIndex)
+      }
+    }
   }
 
-  const onGesture = (event: GestureEvent<any>) => {
-    const { translationY } = event.nativeEvent;
-
-    console.log('onGesture', Math.abs(Math.floor(translationY)))
-
-    const divisor = 30.0;
-
-    let newIndex = currentIndex - (translationY / divisor);
-
-    if (newIndex < 0) newIndex = 0;
-    if (newIndex > data.length - 1) newIndex = data.length - 1;
-
-    setCurrentIndex(Math.floor(newIndex))
-    console.log('newindex', Math.floor(newIndex))
-    scrollYIndex.setValue(Math.floor(newIndex));
-
-    // if (translationY < 0) {
-    //   console.log("User swiped up!", currentIndex);
-    //   if (currentIndex > 0) {
-    //     console.info('qqqqqqqqqqqqqq', currentIndex - Math.floor(newIndex))
-    //     setCurrentIndex(currentIndex => currentIndex - Math.floor(newIndex))
-    //     scrollYIndex.setValue(currentIndex);
-    //   }
-    // } else if (translationY > 0) {
-    //   console.log("User swiped down!", currentIndex);
-    //   if (currentIndex < data.length) {
-    //     console.warn('wwwwwwwwwwwwwww', currentIndex + Math.floor(newIndex))
-    //     setCurrentIndex(currentIndex => currentIndex + Math.floor(newIndex))
-    //     scrollYIndex.setValue(currentIndex)
-    //   }
-    // }
+  const swipeUp = (event: HandlerStateChangeEvent<any>) => {
+    if (event.nativeEvent.state === State.END) {
+      console.log('UP')
+      if (currentIndex < data.length) {
+        console.info('qqqqqqqqqqqqqqqqq', currentIndex - 1)
+        setCurrentIndex(currentIndex => currentIndex - 1)
+        scrollYIndex.setValue(currentIndex)
+      }
+    }
   }
 
   return (
-    <PanGestureHandler onGestureEvent={onGesture}>
-      <FlatList
-        data={data}
-        keyExtractor={(_, index) => String(index)}
-        inverted
-        contentContainerStyle={styles.flatListContainer}
-        removeClippedSubviews={false}
-        scrollEnabled={false}
-        pagingEnabled
-        CellRendererComponent={({ item, index, children, style, ...props }) => {
-          const newStyle: StyleProp<ViewStyle> = [
-            style,
-            {
-              zIndex: data.length - index,
-            }
-          ]
-          return (
-            <View key={index} style={newStyle}>
-              {children}
-            </View>
-          )
-        }}
-        renderItem={renderItem}
-      />
-    </PanGestureHandler>
+    <FlingGestureHandler
+      key={'down'}
+      direction={Directions.DOWN}
+      onHandlerStateChange={swipeDown}>
+      <FlingGestureHandler
+        key={'down'}
+        direction={Directions.UP}
+        onHandlerStateChange={swipeUp}>
+        <FlatList
+          data={data}
+          keyExtractor={(_, index) => String(index)}
+          inverted
+          contentContainerStyle={styles.flatListContainer}
+          removeClippedSubviews={false}
+          scrollEnabled={false}
+          pagingEnabled
+          CellRendererComponent={({ item, index, children, style, ...props }) => {
+            const newStyle: StyleProp<ViewStyle> = [
+              style,
+              {
+                zIndex: data.length - index,
+              }
+            ]
+            return (
+              <View key={index} style={newStyle}>
+                {children}
+              </View>
+            )
+          }}
+          renderItem={renderItem}
+        />
+      </FlingGestureHandler>
+    </FlingGestureHandler>
   );
 };
 
