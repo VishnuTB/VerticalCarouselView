@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   Animated,
-  Easing,
+  Button,
   FlatList,
   Image,
   StyleProp,
@@ -35,17 +35,17 @@ const HomeScreen: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0)
 
   useEffect(() => {
-    // Animated.spring(scrollYAnimtaed, {
-    //   toValue: scrollYIndex,
-    //   useNativeDriver: true
-    // }).start()
-
-    Animated.timing(scrollYAnimtaed, {
+    Animated.spring(scrollYAnimtaed, {
       toValue: scrollYIndex,
-      duration: 300,
-      useNativeDriver: true,
-      easing: Easing.linear
-    }).start();
+      useNativeDriver: true
+    }).start()
+
+    // Animated.timing(scrollYAnimtaed, {
+    //   toValue: scrollYIndex,
+    //   duration: 300,
+    //   useNativeDriver: true,
+    //   easing: Easing.linear
+    // }).start();
 
     // setInterval(() => {
     //   const newIndex: number = Math.floor(Math.random() * data.length)
@@ -84,8 +84,8 @@ const HomeScreen: React.FC = () => {
         <TouchableOpacity style={styles.cardContainer}
           activeOpacity={0}
           onPress={() => {
-            // scrollYIndex.setValue(index)
-            console.log('item clicked')
+            scrollYIndex.setValue(index)
+            // console.log('item clicked')
           }}>
           <Image style={styles.bgImage}
             source={{ uri: 'https://picsum.photos/500/300' }} />
@@ -175,42 +175,64 @@ const HomeScreen: React.FC = () => {
 
 
   return (
-    <FlingGestureHandler
-      key={'down'}
-      direction={Directions.DOWN}
-      onHandlerStateChange={swipeDown}>
+    <View style={{
+      flex: 1
+    }}>
       <FlingGestureHandler
         key={'down'}
-        direction={Directions.UP}
-        onHandlerStateChange={swipeUp}>
-        {/* <PanGestureHandler onGestureEvent={onGestureEvent}
+        direction={Directions.DOWN}
+        onHandlerStateChange={swipeDown}>
+        <FlingGestureHandler
+          key={'down'}
+          direction={Directions.UP}
+          onHandlerStateChange={swipeUp}>
+          {/* <PanGestureHandler onGestureEvent={onGestureEvent}
       onHandlerStateChange={onHandlerStateChange}> */}
-        <FlatList
-          data={data}
-          keyExtractor={(_, index) => String(index)}
-          inverted
-          contentContainerStyle={styles.flatListContainer}
-          removeClippedSubviews={false}
-          scrollEnabled={false}
-          pagingEnabled
-          CellRendererComponent={({ item, index, children, style, ...props }) => {
-            const newStyle: StyleProp<ViewStyle> = [
-              style,
-              {
-                zIndex: data.length - index,
-              }
-            ]
-            return (
-              <View key={index} style={newStyle}>
-                {children}
-              </View>
-            )
-          }}
-          renderItem={renderItem}
-        />
-        {/* </PanGestureHandler> */}
+          <FlatList
+            data={data}
+            keyExtractor={(_, index) => String(index)}
+            inverted
+            contentContainerStyle={styles.flatListContainer}
+            removeClippedSubviews={false}
+            scrollEnabled={false}
+            pagingEnabled
+            CellRendererComponent={({ item, index, children, style, ...props }) => {
+              const newStyle: StyleProp<ViewStyle> = [
+                style,
+                {
+                  zIndex: data.length - index,
+                }
+              ]
+              return (
+                <View key={index} style={newStyle}>
+                  {children}
+                </View>
+              )
+            }}
+            renderItem={renderItem}
+          />
+          {/* </PanGestureHandler> */}
+        </FlingGestureHandler>
       </FlingGestureHandler>
-    </FlingGestureHandler>
+      <View style={{
+        flexDirection: 'row'
+      }}>
+        <View style={{ flex: 1 }}>
+
+          <Button title="Up" onPress={() => {
+            setCurrentIndex(index => index + 1)
+            scrollYIndex.setValue(currentIndex)
+          }} />
+        </View>
+        <View style={{ flex: 1 }}>
+
+          <Button title="Down" onPress={() => {
+            setCurrentIndex(index => index + 1)
+            scrollYIndex.setValue(currentIndex)
+          }} />
+        </View>
+      </View>
+    </View>
   );
 };
 
